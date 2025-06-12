@@ -221,6 +221,19 @@ impl PumpkinBlock for RedstoneWireBlock {
         }
     }
 
+    async fn on_state_replaced(
+        &self,
+        _world: &Arc<World>,
+        _block: &Block,
+        _location: BlockPos,
+        _old_state_id: BlockStateId,
+        moved: bool,
+    ) {
+        if !moved {
+
+        }
+    }
+
     async fn get_weak_redstone_power(
         &self,
         block: &Block,
@@ -279,8 +292,12 @@ impl PumpkinBlock for RedstoneWireBlock {
 }
 
 async fn can_place_at(world: &World, block_pos: &BlockPos) -> bool {
-    let floor = world.get_block_state(&block_pos.down()).await;
-    floor.is_side_solid(BlockDirection::Up)
+    can_run_on_top(world, &block_pos.down()).await
+}
+
+async fn can_run_on_top(world: &World, floor_pos: &BlockPos) -> bool {
+    let (floor_block, floor_state) = world.get_block_and_block_state(floor_pos).await;
+    floor_state.is_side_solid(BlockDirection::Up) || floor_block == Block::HOPPER
 }
 
 async fn on_use(wire: RedstoneWireProperties, world: &Arc<World>, block_pos: &BlockPos) -> bool {
