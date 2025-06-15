@@ -1,4 +1,4 @@
-use pumpkin_data::block_properties::HorizontalAxis;
+use pumpkin_data::block_properties::{BlockProperties, FireLikeProperties, HorizontalAxis};
 use pumpkin_data::entity::EntityType;
 use pumpkin_registry::DimensionType;
 use pumpkin_world::world::BlockAccessor;
@@ -31,6 +31,58 @@ impl FireBlock {
     pub fn get_fire_tick_delay() -> i32 {
         30 + rand::thread_rng().gen_range(0..10)
     }
+
+    pub async fn are_blocks_around_flammable(world: &World, block_pos: &BlockPos) -> bool {
+        for direction in BlockDirection::all() {
+            let state = world.get_block_state(&block_pos.offset(direction.to_offset())).await;
+            if Self::is_flammable(&state) {
+                return true;
+            }
+        }
+        false
+    }
+
+    pub async fn get_state_for_position(world: &World, block_pos: &BlockPos) -> BlockStateId {
+        // let other_block_pos = block_pos.offset(direction.to_offset());
+        // let (other_block, other_block_state) =
+        //     world.get_block_and_block_state(&other_block_pos).await;
+
+        // let connected = connects_to(block, &other_block, &other_block_state, direction);
+        // match direction {
+        //     BlockDirection::North => fence_props.north = connected,
+        //     BlockDirection::South => fence_props.south = connected,
+        //     BlockDirection::West => fence_props.west = connected,
+        //     BlockDirection::East => fence_props.east = connected,
+        //     _ => {}
+        // }
+        let block_pos_below = block_pos.down();
+        let block_state_below = world.get_block_state(&block_pos_below).await;
+
+        if Self::is_flammable(&block_state_below) || block_state_below.is_side_solid(BlockDirection::Up) {
+            let mut fire_props = FireLikeProperties::default(&Block::FIRE);
+            for direction in BlockDirection::all() {
+                match direction {
+                    BlockDirection::Down => {/* no-op */},
+                    BlockDirection::Up => fire_props.up = connected,
+                    BlockDirection::North => todo!(),
+                    BlockDirection::South => todo!(),
+                    BlockDirection::West => todo!(),
+                    BlockDirection::East => todo!(),
+                }
+            }
+        }
+
+        BlockStateId::default()
+    }
+
+    pub fn is_flammable(state: &BlockState) -> bool {
+        true
+    }
+
+    pub fn get_burn_chance(state: BlockState) {
+
+    }
+
 }
 
 #[async_trait]

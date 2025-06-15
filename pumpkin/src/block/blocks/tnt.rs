@@ -56,9 +56,11 @@ impl PumpkinBlock for TNTBlock {
         _server: &Server,
         _world: &Arc<World>,
     ) -> BlockActionResult {
-        if *item != Item::FLINT_AND_STEEL || *item == Item::FIRE_CHARGE {
+        if *item != Item::FLINT_AND_STEEL && *item != Item::FIRE_CHARGE {
             return BlockActionResult::Continue;
         }
+        // TODO: Decrement ItemStack for fire charge
+
         let world = player.world().await;
         Self::prime(&world, &location).await;
 

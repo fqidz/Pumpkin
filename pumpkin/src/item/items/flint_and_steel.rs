@@ -33,7 +33,7 @@ impl PumpkinItem for FlintAndSteelItem {
         let world = player.world().await;
         let pos = location.offset(face.to_offset());
         if FireBlockBase::can_place_at(world.as_ref(), &pos).await {
-            let fire_block = FireBlockBase::get_fire_type(&world, &pos).await;
+            let fire_block = FireBlockBase::get_state(&world, &pos).await;
 
             world
                 .set_block_state(&pos, fire_block.default_state_id, BlockFlags::NOTIFY_ALL)
