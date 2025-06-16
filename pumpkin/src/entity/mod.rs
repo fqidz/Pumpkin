@@ -42,6 +42,7 @@ use tokio::sync::{Mutex, RwLock};
 use crate::world::World;
 
 pub mod ai;
+pub mod dismounting;
 pub mod effect;
 pub mod experience_orb;
 pub mod hunger;

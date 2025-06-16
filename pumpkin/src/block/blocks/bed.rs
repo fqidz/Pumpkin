@@ -303,6 +303,10 @@ impl BedBlock {
             )
             .await;
     }
+
+    pub async fn find_wake_up_position() {
+
+    }
 }
 
 async fn can_sleep(world: &Arc<World>) -> bool {

@@ -535,9 +535,18 @@ impl Player {
         true
     }
 
+    // getRespawnTarget in source code
     pub async fn get_respawn_point(&self) -> Option<(Vector3<f64>, f32)> {
         let respawn_point = self.respawn_point.load()?;
 
+        if let Some(respawn_pos) = self.find_respawn_position() {
+
+        } else {
+            
+        }
+    }
+
+    async fn find_respawn_position(&self) -> Option<Vector3<f64>> {
         let (block, _block_state) = self
             .world()
             .await

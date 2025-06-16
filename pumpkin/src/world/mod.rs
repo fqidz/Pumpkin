@@ -27,7 +27,7 @@ use border::Worldborder;
 use bytes::{BufMut, Bytes};
 use explosion::Explosion;
 use pumpkin_config::BasicConfiguration;
-use pumpkin_data::entity::EffectType;
+use pumpkin_data::{entity::EffectType, CollisionShape};
 use pumpkin_data::fluid::{Falling, FluidProperties};
 use pumpkin_data::{
     Block,
@@ -2012,6 +2012,18 @@ impl World {
         }
 
         None
+    }
+
+    pub async fn get_dismount_height<Fut>(
+        self: &Arc<Self>,
+        block_pos: &BlockPos,
+        block_collision_shape_getter: impl Fn(&Arc<World>, &BlockPos) -> Fut,
+    ) where 
+        Fut: Future<Output = Option<Vec<CollisionShape>>>,
+    {
+        if let Some(block_collision_shape) = block_collision_shape_getter(self, block_pos).await {
+            block_collision_shape
+        }
     }
 }
 
