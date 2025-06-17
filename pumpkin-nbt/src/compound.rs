@@ -204,6 +204,18 @@ impl NbtCompound {
     pub fn get_long_array(&self, name: &str) -> Option<&[i64]> {
         self.get(name).and_then(|tag| tag.extract_long_array())
     }
+
+    #[inline]
+    pub fn remove(&mut self, name: &str) -> Option<NbtTag> {
+        if let Some(index) = self
+            .child_tags
+            .iter()
+            .position(|(key, _value)| *key == name)
+        {
+            return Some(self.child_tags.swap_remove(index).1);
+        }
+        None
+    }
 }
 
 impl From<Nbt> for NbtCompound {

@@ -207,6 +207,16 @@ impl Entity {
         }
     }
 
+    pub fn copy_from(&self, original: &Self) {
+        let mut nbt_compound = NbtCompound::default();
+        original.write_nbt(&mut nbt_compound);
+        nbt_compound.remove("Dimension");
+        self.read_nbt(&mut nbt_compound);
+        
+        self.portal_cooldown = original.portal_cooldown;
+        self.portal_manager = original.portal_manager;
+    }
+
     pub async fn set_velocity(&self, velocity: Vector3<f64>) {
         self.velocity.store(velocity);
         self.world
@@ -726,9 +736,22 @@ impl Entity {
         position: Option<Vector3<f64>>,
         yaw: Option<f32>,
         pitch: Option<f32>,
-        _world: Arc<World>,
+        world: Arc<World>,
     ) {
-        // TODO: handle world change
+        if self.world.read().await.dimension_type != world.dimension_type {
+            self.teleport_cross_dimension(position, yaw, pitch, world).await;
+        } else {
+            self.teleport_same_dimension(position, yaw, pitch).await;
+        }
+    }
+
+    async fn teleport_same_dimension(
+        &self,
+        position: Option<Vector3<f64>>,
+        yaw: Option<f32>,
+        pitch: Option<f32>,
+    ) {
+        // TODO: handle passengers & riding entities
         self.world
             .read()
             .await
@@ -741,6 +764,19 @@ impl Entity {
                 self.on_ground.load(Ordering::SeqCst),
             ))
             .await;
+    }
+
+    async fn teleport_cross_dimension(
+        &self,
+        position: Option<Vector3<f64>>,
+        yaw: Option<f32>,
+        pitch: Option<f32>,
+        world: Arc<World>,
+    ) {
+        let new_entity = world.clone().create_entity(position, self.entity_type);
+        new_entity.copy_from(self);
+        self.remove();
+        // TODO: handle passengers & riding entities
     }
 }
 
