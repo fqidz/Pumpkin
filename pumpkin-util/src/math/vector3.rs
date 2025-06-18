@@ -249,6 +249,17 @@ where
         }
     }
 
+    pub fn to_i32_floored(&self) -> Vector3<i32> {
+        let x: f64 = self.x.into();
+        let y: f64 = self.y.into();
+        let z: f64 = self.z.into();
+        Vector3 {
+            x: x.floor() as i32,
+            y: y.floor() as i32,
+            z: z.floor() as i32,
+        }
+    }
+
     pub fn to_vec2_i32(&self) -> Vector2<i32> {
         let x: f64 = self.x.into();
         let z: f64 = self.z.into();
@@ -265,6 +276,10 @@ where
 {
     pub fn to_block_pos(&self) -> BlockPos {
         BlockPos(self.to_i32())
+    }
+
+    pub fn to_block_pos_floored(&self) -> BlockPos {
+        BlockPos(self.to_i32_floored())
     }
 }
 

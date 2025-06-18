@@ -22,6 +22,7 @@ use super::{
 use crate::world::bossbar::{BossbarColor, BossbarDivisions};
 use crate::{entity::player::Player, server::Server};
 
+pub mod angle;
 pub mod block;
 pub mod bool;
 pub mod bossbar_color;
@@ -88,6 +89,7 @@ pub enum Arg<'a> {
     BlockPos(BlockPos),
     Pos3D(Vector3<f64>),
     Pos2D(Vector2<f64>),
+    Angle(f32),
     Rotation(f32, f32),
     GameMode(GameMode),
     Difficulty(Difficulty),
